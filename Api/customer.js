@@ -12,6 +12,15 @@ router.post('/addcustomer',function(req,res){
     "details":req.body.details,
     "type":req.body.type
     }
+    
+    connection.query(`select count(email) as count from customers where email='${req.body.email}'`,function (error,results){
+      if(error){
+        console.log(error);
+      }
+      console.log(results);
+      if(results[0].count > 0){
+        res.status(400).json('Customer already exists');
+      }else{
       connection.query('insert into customers set ?',customers, function (error, results, fields) {
         if (error) {
           res.json({
@@ -27,6 +36,8 @@ router.post('/addcustomer',function(req,res){
           })
         }
       });
+    }
+  });
 });
 
 router.get('/getcustomer', function(req,res){
